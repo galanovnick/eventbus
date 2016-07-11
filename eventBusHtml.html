@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script type="text/javascript" src="eventBus.js"></script>
+	<script type="text/javascript">
+		var eb = new EventBus();
+
+		var firstSubscriber = function(data) {
+			console.log("First subscriber: " + data);
+			return "first";
+		}
+
+		var slowSubscriber = function(data) {
+
+			var result = 0;
+
+			for (var i = 0; i < 100000000; i++) {
+				result += i;
+				if (i % 2 == 0) {
+					result /= i;
+					result *= i;
+				}	
+			}
+			console.log("Slow subscriber: " + data);
+			return "second";
+		}
+
+		eb.subscribe("slow", slowSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+		eb.subscribe("fast", firstSubscriber);
+
+		for (var i = 0; i < 10; i++) {
+			console.log(eb.post("event data #" + i));
+		}
+	</script>
+</head>
+
+<body></body>
+
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "event_bus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "eventBus.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "unit.js": "^2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
