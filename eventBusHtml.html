@@ -8,7 +8,6 @@
 
 		var firstSubscriber = function(name) {
 			console.log("First subscriber: " + name);
-			return "first";
 		}
 
 		var slowSubscriber = function(name) {
@@ -23,7 +22,6 @@
 				}	
 			}
 			console.log("Slow subscriber: " + name);
-			return "second";
 		}
 
 		eb.subscribe("slow", slowSubscriber);

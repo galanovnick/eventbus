@@ -1,32 +1,25 @@
 var EventBus = function() {
 
-	var _subscribers = new Array();
+	var _workers = [];
 
 	var _post = function(eventData, eventType) {
-		if (eventType != undefined && !(eventType in _subscribers)) {
+		if (eventType != undefined && !(eventType in _workers)) {
 			return;
 		}
 
 		if (eventType != undefined) {
-			var subscriberAction = _createActionByEventType(eventType);
 
-			for (var i = 0; i < _subscribers[eventType].length; i++) {
+			for (var i = 0; i < _workers[eventType].length; i++) {
 
-				var currentSubscriber = _subscribers[eventType][i];
-
-				subscriberAction(currentSubscriber, eventData);
+				_workers[eventType][i].postMessage(eventData);
 
 			}
 		} else {
-			Object.keys(_subscribers).forEach(function(eventTypeKey, index) {
+			Object.keys(_workers).forEach(function(eventTypeKey, index) {
 
-				var subscriberAction = _createActionByEventType(eventTypeKey);
-
-				for (var i = 0; i < _subscribers[eventTypeKey].length; i++) {
-
-					var currentSubscriber = _subscribers[eventTypeKey][i];
+				for (var i = 0; i < _workers[eventTypeKey].length; i++) {
 					
-					subscriberAction(currentSubscriber, eventData);
+					_workers[eventTypeKey][i].postMessage(eventData);
 
 				}
 			});
@@ -34,17 +27,15 @@ var EventBus = function() {
 	};
 
 	var _subscribe = function(eventType, callback) {
-		if (typeof _subscribers[eventType] === 'undefined') {
-			_subscribers[eventType] = new Array();
+		if (typeof _workers[eventType] === 'undefined') {
+			_workers[eventType] = [];
 		}
-		_subscribers[eventType].push(callback);
-	};
 
-
-	var _createActionByEventType = function(eventType) {
-		return function(currentSubscriber, evt) {
-			return currentSubscriber(evt);
-		};
+		_workers[eventType].push(new Worker(
+				window.URL.createObjectURL(
+					new Blob(["onmessage = function(ev) {" + "(" + callback.toString() + ")(ev.data)};"]))
+			)
+		);
 	};
 
 	return {
