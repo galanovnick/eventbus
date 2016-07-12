@@ -7,7 +7,7 @@
 		var eb = new EventBus();
 
 		var firstSubscriber = function(name) {
-			console.log("First subscriber: " + name);
+			console.log("Fast subscriber: " + name);
 		}
 
 		var slowSubscriber = function(name) {
@@ -26,14 +26,9 @@
 
 		eb.subscribe("slow", slowSubscriber);
 		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
 
-		for (var i = 0; i < 10; i++) {
-			eb.post("event data #" + i);
+		for (var i = 0; i < 5; i++) {
+			eb.post("Vasya #" + i);
 		}
 	</script>
 </head>

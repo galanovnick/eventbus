@@ -12,14 +12,21 @@ var firstSubscriber = function(name) {
 	pushDelivered(firstEventType);
 
 	console.log("First subscriber: " + name);
-	return "First subscriber!";
 }
 
 var secondSubscriber = function(name) {
 	pushDelivered(secondEventType);
 
-	console.log("Second subscriber: " + name);
-	return "Second subscriber!";
+	var result = 0;
+
+	for (var i = 0; i < 100000000; i++) {
+		result += i;
+		if (i % 2 == 0) {
+			result /= i;
+			result *= i;
+		}	
+	}
+	console.log("Slow subscriber: " + name);
 }
 
 var pushDelivered = function(key) {
