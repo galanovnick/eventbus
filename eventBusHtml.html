@@ -6,12 +6,12 @@
 	<script type="text/javascript">
 		var eb = new EventBus();
 
-		var firstSubscriber = function(data) {
-			console.log("First subscriber: " + data);
+		var firstSubscriber = function(name) {
+			console.log("First subscriber: " + name);
 			return "first";
 		}
 
-		var slowSubscriber = function(data) {
+		var slowSubscriber = function(name) {
 
 			var result = 0;
 
@@ -22,7 +22,7 @@
 					result *= i;
 				}	
 			}
-			console.log("Slow subscriber: " + data);
+			console.log("Slow subscriber: " + name);
 			return "second";
 		}
 

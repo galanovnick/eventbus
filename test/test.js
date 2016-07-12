@@ -2,61 +2,77 @@ var eventBusSrc = require('../eventBus');
 
 var eb = new eventBusSrc.EventBus();
 
-var firstSubscriber = function(data) {
-	console.log("First subscriber: " + data);
+var delivered = {};
+
+var firstEventType = "firstType";
+var secondEventType = "secondType";
+var thirdEventType = "thirdType";
+
+var firstSubscriber = function(name) {
+	pushDelivered(firstEventType);
+
+	console.log("First subscriber: " + name);
 	return "First subscriber!";
 }
 
-var secondSubscriber = function(data) {
-	console.log("Second subscriber: " + data);
+var secondSubscriber = function(name) {
+	pushDelivered(secondEventType);
+
+	console.log("Second subscriber: " + name);
 	return "Second subscriber!";
 }
 
+var pushDelivered = function(key) {
+	if (typeof delivered[key] === 'undefined') {
+		delivered[key] = [];
+	}
+	delivered[key].push(true);
+}
+
+eb.subscribe(firstEventType, firstSubscriber);
+eb.subscribe(secondEventType, secondSubscriber);
+
 for (var i = 0; i < 10; i++) {
-	eb.subscribe("first", firstSubscriber);
+	eb.post("Vasya", firstEventType);
+
 	if (i % 2 == 0) {
-		eb.subscribe("second", secondSubscriber);
+		eb.post("Masha", secondEventType);
+	}
+	if (i % 5 == 0) {
+		eb.post("Petya", thirdEventType);
 	}
 }
 
 //TESTS---------------------------------------------
 
-describe("test-suit", function() {
+describe("test-suite", function() {
 
 	var test = require("unit.js");
 
-	var firstSubscriberCallbackResult = firstSubscriber("data");
-	var secondSubscriberCallbackResult = secondSubscriber("data");
-	var eventBusResult = eb.post("data");
-	var firstResults = eventBusResult.first;
-	var secondResults = eventBusResult.second;
-
-	it("Unexpected value of first subscriber callback function.", function() {
+	it("Failed delivery of first event type data.", function() {
 		test
-			.string(firstSubscriberCallbackResult)
-				.is("First subscriber!")
-		;
-	});
-
-	it("Unexpected value of second subscriber callback function.", function() {
-		test
-			.string(secondSubscriberCallbackResult)
-				.is("Second subscriber!")
-		;
-	});
-
-	it("Failed event bus test.", function() {
-		test
-			.array(eventBusResult)
-				.hasLength(2)
-				.hasProperty("first")
-				.hasProperty("second")
-			.array(firstResults)
+			.object(delivered)
+				.hasProperty(firstEventType)
+			.array(delivered[firstEventType])
 				.isNotEmpty()
 				.hasLength(10)
-			.array(secondResults)
+		;
+	});
+
+	it("Failed delivery of second event type data.", function() {
+		test
+			.object(delivered)
+				.hasProperty(secondEventType)
+			.array(delivered[secondEventType])
 				.isNotEmpty()
 				.hasLength(5)
+		;
+	});
+
+	it("Unexpected delivery of unknown event type data.", function() {
+		test
+			.object(delivered)
+				.hasNotProperty(thirdEventType)
 		;
 	});
 });
