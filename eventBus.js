@@ -1,4 +1,4 @@
-var EventBus = function() {
+var EventBus = function(createSubscriber) {
 
 	var _subscribers = new Array();
 
@@ -8,27 +8,18 @@ var EventBus = function() {
 		}
 
 		if (eventType != undefined) {
-			var subscriberAction = _createActionByEventType(eventType);
-
 			for (var i = 0; i < _subscribers[eventType].length; i++) {
 
-				var currentSubscriber = _subscribers[eventType][i];
-
-				subscriberAction(currentSubscriber, eventData);
+				_subscribers[eventType][i](eventData);
 
 			}
 		} else {
 			Object.keys(_subscribers).forEach(function(eventTypeKey, index) {
 
-				var subscriberAction = _createActionByEventType(eventTypeKey);
-
 				for (var i = 0; i < _subscribers[eventTypeKey].length; i++) {
-
-					var currentSubscriber = _subscribers[eventTypeKey][i];
-					
-					subscriberAction(currentSubscriber, eventData);
-
+					_subscribers[eventTypeKey][i](eventData);
 				}
+
 			});
 		}
 	};
@@ -37,14 +28,7 @@ var EventBus = function() {
 		if (typeof _subscribers[eventType] === 'undefined') {
 			_subscribers[eventType] = new Array();
 		}
-		_subscribers[eventType].push(callback);
-	};
-
-
-	var _createActionByEventType = function(eventType) {
-		return function(currentSubscriber, evt) {
-			return currentSubscriber(evt);
-		};
+		_subscribers[eventType].push(createSubscriber(callback));
 	};
 
 	return {
@@ -53,4 +37,4 @@ var EventBus = function() {
 	}
 };
 
-module.exports.EventBus = EventBus;
+//module.exports.EventBus = EventBus;

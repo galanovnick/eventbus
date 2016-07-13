@@ -4,7 +4,14 @@
 <head>
 	<script type="text/javascript" src="eventBus.js"></script>
 	<script type="text/javascript">
-		var eb = new EventBus();
+		var eb = new EventBus(function(callback) {
+			return function(eventData) {
+				new Worker(
+					window.URL.createObjectURL(
+						new Blob(["onmessage = function(ev) {" + "(" + callback.toString() + ")(ev.data)};"]))
+				).postMessage(eventData);
+			}
+		});
 
 		var firstSubscriber = function(name) {
 			console.log("First subscriber: " + name);
@@ -27,9 +34,6 @@
 		}
 
 		eb.subscribe("slow", slowSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
-		eb.subscribe("fast", firstSubscriber);
 		eb.subscribe("fast", firstSubscriber);
 		eb.subscribe("fast", firstSubscriber);
 		eb.subscribe("fast", firstSubscriber);
