@@ -1,6 +1,10 @@
 var eventBusSrc = require('../eventBus');
 
-var eb = new eventBusSrc.EventBus();
+var eb = new eventBusSrc.EventBus(function(callback) {
+	return function(eventData) {
+		callback(eventData);
+	}
+});
 
 var delivered = {};
 
@@ -42,6 +46,8 @@ for (var i = 0; i < 10; i++) {
 		eb.post("Petya", thirdEventType);
 	}
 }
+
+
 
 //TESTS---------------------------------------------
 

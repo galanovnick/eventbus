@@ -37,4 +37,4 @@ var EventBus = function(createSubscriber) {
 	}
 };
 
-//module.exports.EventBus = EventBus;
+module.exports.EventBus = EventBus;
